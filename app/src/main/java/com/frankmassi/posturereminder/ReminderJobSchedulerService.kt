@@ -4,10 +4,9 @@ import android.app.Service
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Intent
-import android.os.Message
-import android.os.Messenger
-import android.os.RemoteException
-import android.util.Log
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /**
  * Service to handle callbacks from the JobScheduler. Requests scheduled with the JobScheduler
@@ -17,6 +16,10 @@ import android.util.Log
 class ReminderJobSchedulerService : JobService() {
 
     private var notificationHelper: ReminderNotificationHelper? = null
+    private val notificationFormatter: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd h:mma").withZone(
+            ZoneId.systemDefault()
+        )
 
     /**
      * When the app's MainActivity is created, it starts this service. This is so that the
@@ -28,12 +31,13 @@ class ReminderJobSchedulerService : JobService() {
 
     override fun onStartJob(params: JobParameters): Boolean {
         notificationHelper = ReminderNotificationHelper(this)
-        val notification1 = notificationHelper?.getNotification(
-            getString(R.string.notification_title), getString(
-                R.string.notification_body
-            )
-        )
-        if (notification1 != null) notificationHelper?.notify(1, notification1)
+        val body = "${notificationFormatter.format(Instant.now()).toLowerCase()}: " +
+                getString(R.string.notification_body)
+
+        val notification =
+            notificationHelper?.getNotification(getString(R.string.notification_title), body)
+
+        if (notification != null) notificationHelper?.notify(1, notification)
         return true
     }
 

@@ -52,7 +52,7 @@ class MainActivity : Activity() {
         notificationHelper = ReminderNotificationHelper(this)
         serviceComponent = ComponentName(this, ReminderJobSchedulerService::class.java)
 
-        findViewById<Button>(R.id.disable_button).setOnClickListener { cancelAllJobs() }
+        findViewById<Button>(R.id.disable_button).setOnClickListener { cancelAllJobs(true) }
         findViewById<Button>(R.id.enable_button).setOnClickListener { scheduleJob() }
     }
 
@@ -95,16 +95,17 @@ class MainActivity : Activity() {
             Toast.LENGTH_SHORT
         ).show()
         Log.d(TAG, getString(R.string.reminders_enabled))
+        cancelAllJobs(false)
         (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).schedule(builder.build())
     }
 
     /**
      * Executed when user clicks on CANCEL ALL.
      */
-    private fun cancelAllJobs() {
+    private fun cancelAllJobs(showToast: Boolean) {
         (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).cancelAll()
         Log.d(TAG, getString(R.string.reminders_disabled))
-        showToast(getString(R.string.reminders_disabled))
+        if (showToast) showToast(getString(R.string.reminders_disabled))
     }
 
     companion object {
