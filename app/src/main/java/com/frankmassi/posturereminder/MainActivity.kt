@@ -17,31 +17,19 @@
 package com.frankmassi.posturereminder
 
 import android.app.Activity
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.Messenger
 import android.util.Log
 import android.widget.*
+import androidx.work.*
+import java.time.Duration
 import java.util.concurrent.TimeUnit
+import androidx.work.PeriodicWorkRequestBuilder as PeriodicWorkRequestBuilder1
 
-/**
- * Schedules and configures jobs to be executed by a [JobScheduler].
- *
- * [MyJobService] can send messages to this via a [Messenger]
- * that is sent in the Intent that starts the Service.
- */
+const val MIN_RECURRANCE_MINUTES = 15L
 class MainActivity : Activity() {
 
-    lateinit private var durationTimeEditText: EditText
-
-    // Handler for incoming messages from the service.
-    lateinit private var serviceComponent: ComponentName
-    lateinit private var notificationHelper: ReminderNotificationHelper
-    private var jobId = 0
+    private lateinit var durationTimeEditText: EditText
+    private lateinit var workManager: WorkManager
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,66 +37,67 @@ class MainActivity : Activity() {
 
         durationTimeEditText = findViewById(R.id.duration_time)
 
-        notificationHelper = ReminderNotificationHelper(this)
-        serviceComponent = ComponentName(this, ReminderJobSchedulerService::class.java)
+        workManager = WorkManager.getInstance(this)
 
-        findViewById<Button>(R.id.disable_button).setOnClickListener { cancelAllJobs(true) }
+        findViewById<Button>(R.id.disable_button).setOnClickListener { cancelPeriodicWork(true) }
         findViewById<Button>(R.id.enable_button).setOnClickListener { scheduleJob() }
-    }
-
-    override fun onStop() {
-        // A service can be "started" and/or "bound". In this case, it's "started" by this Activity
-        // and "bound" to the JobScheduler (also called "Scheduled" by the JobScheduler). This call
-        // to stopService() won't prevent scheduled jobs to be processed. However, failing
-        // to call stopService() would keep it alive indefinitely.
-        stopService(Intent(this, ReminderJobSchedulerService::class.java))
-        super.onStop()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // Start service and provide it a way to communicate with this class.
-        val startServiceIntent = Intent(this, ReminderJobSchedulerService::class.java)
-        startService(startServiceIntent)
     }
 
     /**
      * Executed when user clicks on SCHEDULE JOB.
      */
     private fun scheduleJob() {
-        val builder = JobInfo.Builder(jobId++, serviceComponent)
-
-        var recurringMinutes = durationTimeEditText.text.toString()
-        if (recurringMinutes.isEmpty() || recurringMinutes.toInt() < 15) {
-            recurringMinutes = "15"
-            Toast.makeText(this, getString(R.string.min_reminder_exceeded), Toast.LENGTH_SHORT)
-                .show()
-            durationTimeEditText.setText(recurringMinutes)
-        }
-        builder.setPeriodic(recurringMinutes.toLong() * TimeUnit.MINUTES.toMillis(1))
-
+        cancelPeriodicWork(false)
+        val recurringMinutes = setRecurringMinutes()
+        enqueueWork(recurringMinutes)
 
         // Schedule job
         Toast.makeText(
             this,
-            "Reminder notifications will occur every ${recurringMinutes} minutes",
+            "Reminder notifications will occur every $recurringMinutes minutes",
             Toast.LENGTH_SHORT
         ).show()
         Log.d(TAG, getString(R.string.reminders_enabled))
-        cancelAllJobs(false)
-        (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).schedule(builder.build())
+    }
+
+    private fun setRecurringMinutes(): Long {
+        var recurringMinutes: Long = durationTimeEditText.text.toString().toLong()
+        if (recurringMinutes.toInt() < MIN_RECURRANCE_MINUTES) {
+            recurringMinutes = MIN_RECURRANCE_MINUTES
+            Toast.makeText(this, getString(R.string.min_reminder_exceeded), Toast.LENGTH_SHORT)
+                .show()
+            durationTimeEditText.setText(recurringMinutes.toString())
+        }
+        return recurringMinutes
+    }
+
+    private fun enqueueWork(recurringMinutes: Long) {
+        val constraints = Constraints.Builder().build()
+        val work = PeriodicWorkRequestBuilder1<ReminderWorker>(
+            repeatInterval = Duration.ofMinutes(recurringMinutes)
+        )
+            .setInitialDelay(0, TimeUnit.MINUTES)
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
+            .setConstraints(constraints)
+            .addTag(this.packageName)
+            .build()
+        workManager.enqueue(work)
     }
 
     /**
      * Executed when user clicks on CANCEL ALL.
      */
-    private fun cancelAllJobs(showToast: Boolean) {
-        (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).cancelAll()
+    private fun cancelPeriodicWork(showToast: Boolean) {
+        workManager.cancelAllWorkByTag(this.packageName)
         Log.d(TAG, getString(R.string.reminders_disabled))
         if (showToast) showToast(getString(R.string.reminders_disabled))
     }
 
     companion object {
-        private val TAG = "MainActivity"
+        private const val TAG = "MainActivity"
     }
 }
