@@ -18,6 +18,8 @@ package com.frankmassi.posturereminder
 
 import android.app.Activity
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.text.Editable
 import android.util.Log
 import android.widget.*
 import androidx.work.*
@@ -25,7 +27,6 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import androidx.work.PeriodicWorkRequestBuilder as PeriodicWorkRequestBuilder1
 
-const val MIN_RECURRANCE_MINUTES = 15L
 class MainActivity : Activity() {
 
     private lateinit var durationTimeEditText: EditText
@@ -39,8 +40,24 @@ class MainActivity : Activity() {
 
         workManager = WorkManager.getInstance(this)
 
+        durationTimeEditText.text =
+            Editable.Factory.getInstance().newEditable(getRecurringMinutesPreference())
+
         findViewById<Button>(R.id.disable_button).setOnClickListener { cancelPeriodicWork(true) }
         findViewById<Button>(R.id.enable_button).setOnClickListener { scheduleJob() }
+    }
+
+    private fun getRecurringMinutesPreference(): String {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+            .getInt(
+                getString(R.string.RecurringMinutesVariable),
+                this.resources.getInteger(R.integer.defaultRecurringMinutes)
+            ).toString()
+    }
+
+    private fun setRecurringMinutesPreference(value: Int) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .edit().putInt(getString(R.string.RecurringMinutesVariable), value).apply()
     }
 
     /**
@@ -60,21 +77,23 @@ class MainActivity : Activity() {
         Log.d(TAG, getString(R.string.reminders_enabled))
     }
 
-    private fun setRecurringMinutes(): Long {
-        var recurringMinutes: Long = durationTimeEditText.text.toString().toLong()
-        if (recurringMinutes.toInt() < MIN_RECURRANCE_MINUTES) {
-            recurringMinutes = MIN_RECURRANCE_MINUTES
+    private fun setRecurringMinutes(): Int {
+        var recurringMinutes: Int = durationTimeEditText.text.toString().toInt()
+        if (recurringMinutes < this.resources.getInteger(R.integer.defaultRecurringMinutes)) {
+            recurringMinutes = this.resources.getInteger(R.integer.defaultRecurringMinutes)
             Toast.makeText(this, getString(R.string.min_reminder_exceeded), Toast.LENGTH_SHORT)
                 .show()
-            durationTimeEditText.setText(recurringMinutes.toString())
         }
+        durationTimeEditText.text =
+            Editable.Factory.getInstance().newEditable(recurringMinutes.toString())
+        setRecurringMinutesPreference(recurringMinutes)
         return recurringMinutes
     }
 
-    private fun enqueueWork(recurringMinutes: Long) {
+    private fun enqueueWork(recurringMinutes: Int) {
         val constraints = Constraints.Builder().build()
         val work = PeriodicWorkRequestBuilder1<ReminderWorker>(
-            repeatInterval = Duration.ofMinutes(recurringMinutes)
+            repeatInterval = Duration.ofMinutes(recurringMinutes.toLong())
         )
             .setInitialDelay(0, TimeUnit.MINUTES)
             .setBackoffCriteria(
