@@ -36,7 +36,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        durationTimeEditText = findViewById(R.id.duration_time)
+        durationTimeEditText = this.findViewById(R.id.duration_time)
 
         workManager = WorkManager.getInstance(this)
 

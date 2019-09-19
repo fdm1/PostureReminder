@@ -12,3 +12,8 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Build resources/artifacts
+*.jks
+*.aab
+*.apk

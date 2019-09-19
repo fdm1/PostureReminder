@@ -45,6 +45,7 @@ internal class ReminderNotificationHelper
         chan1.lightColor = Color.GREEN
         chan1.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         chan1.shouldVibrate()
+        chan1.importance = NotificationManager.IMPORTANCE_LOW
         manager.createNotificationChannel(chan1)
     }
 
