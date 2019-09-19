@@ -15,7 +15,7 @@ limitations under the License.
 -->
 
 <resources>
-    <string name="app_name">Posture Reminder</string>
+    <string name="app_name">Slouchr</string>
     <string name="onstoptask">onStopTask</string>
     <string name="onstarttask">onStartTask</string>
     <string name="enable_reminders_button_text">Enable Reminders</string>
