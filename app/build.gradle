@@ -44,3 +44,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation "androidx.work:work-testing:$work_version"
 }
+
+task tagGithub(type: Exec) {
+    workingDir "../bin"
+    executable "python3"
+    args "tag_release.py", android.defaultConfig.versionName + "-" + android.defaultConfig.versionCode
+}
