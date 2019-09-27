@@ -16,12 +16,12 @@
 
 package com.frankmassi.posturereminder
 
-import android.app.Activity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Editable
 import android.util.Log
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.frankmassi.posturereminder.databinding.ActivityMainBinding
@@ -29,16 +29,13 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 import androidx.work.PeriodicWorkRequestBuilder as PeriodicWorkRequestBuilder1
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var workManager: WorkManager
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         workManager = WorkManager.getInstance(this)
 
         binding.durationTime.text =
