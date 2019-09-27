@@ -22,29 +22,30 @@ import android.preference.PreferenceManager
 import android.text.Editable
 import android.util.Log
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import androidx.work.*
+import com.frankmassi.posturereminder.databinding.ActivityMainBinding
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import androidx.work.PeriodicWorkRequestBuilder as PeriodicWorkRequestBuilder1
 
 class MainActivity : Activity() {
-
-    private lateinit var durationTimeEditText: EditText
+    private lateinit var binding: ActivityMainBinding
     private lateinit var workManager: WorkManager
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        durationTimeEditText = this.findViewById(R.id.duration_time)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         workManager = WorkManager.getInstance(this)
 
-        durationTimeEditText.text =
+        binding.durationTime.text =
             Editable.Factory.getInstance().newEditable(getRecurringMinutesPreference())
 
-        findViewById<Button>(R.id.disable_button).setOnClickListener { cancelPeriodicWork(true) }
-        findViewById<Button>(R.id.enable_button).setOnClickListener { scheduleJob() }
+        binding.disableButton.setOnClickListener {cancelPeriodicWork(true)}
+        binding.enableButton.setOnClickListener {scheduleJob()}
     }
 
     private fun getRecurringMinutesPreference(): String {
@@ -78,13 +79,13 @@ class MainActivity : Activity() {
     }
 
     private fun setRecurringMinutes(): Int {
-        var recurringMinutes: Int = durationTimeEditText.text.toString().toInt()
+        var recurringMinutes = binding.durationTime.text.toString().toInt()
         if (recurringMinutes < this.resources.getInteger(R.integer.defaultRecurringMinutes)) {
             recurringMinutes = this.resources.getInteger(R.integer.defaultRecurringMinutes)
             Toast.makeText(this, getString(R.string.min_reminder_exceeded), Toast.LENGTH_SHORT)
                 .show()
         }
-        durationTimeEditText.text =
+        binding.durationTime.text =
             Editable.Factory.getInstance().newEditable(recurringMinutes.toString())
         setRecurringMinutesPreference(recurringMinutes)
         return recurringMinutes

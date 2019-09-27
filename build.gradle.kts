@@ -26,6 +26,7 @@ allprojects {
     extra.apply {
         set("workVersion", "2.2.0")
         set("kotlinVersion", "1.3.50")
+        set("buildToolsVersion", "28.0.3")
     }
 }
 

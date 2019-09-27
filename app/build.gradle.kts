@@ -27,23 +27,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = "28.0.3"
+    buildToolsVersion = project.extra["buildToolsVersion"].toString()
 
-
+    dataBinding {
+        isEnabled = true
+    }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(kotlin("stdlib-jdk7", project.rootProject.extra["kotlinVersion"].toString()))
+    implementation(kotlin("stdlib-jdk7", project.extra["kotlinVersion"].toString()))
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.core:core-ktx:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.work:work-runtime-ktx:${project.rootProject.extra["workVersion"]}")
+    implementation("androidx.work:work-runtime-ktx:${project.extra["workVersion"]}")
     testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
-    androidTestImplementation("androidx.work:work-testing:${project.rootProject.extra["workVersion"]}")
+    androidTestImplementation("androidx.work:work-testing:${project.extra["workVersion"]}")
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions {
