@@ -36,85 +36,9 @@ class MainActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        workManager = WorkManager.getInstance(this)
-
-        binding.durationTime.text =
-            Editable.Factory.getInstance().newEditable(getRecurringMinutesPreference())
-
-        binding.disableButton.setOnClickListener {cancelPeriodicWork(true)}
-        binding.enableButton.setOnClickListener {scheduleJob()}
-    }
-
-    private fun getRecurringMinutesPreference(): String {
-        return PreferenceManager.getDefaultSharedPreferences(this)
-            .getInt(
-                getString(R.string.RecurringMinutesVariable),
-                this.resources.getInteger(R.integer.defaultRecurringMinutes)
-            ).toString()
-    }
-
-    private fun setRecurringMinutesPreference(value: Int) {
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit().putInt(getString(R.string.RecurringMinutesVariable), value).apply()
-    }
-
-    /**
-     * Executed when user clicks on SCHEDULE JOB.
-     */
-    private fun scheduleJob() {
-        cancelPeriodicWork(false)
-        val recurringMinutes = setRecurringMinutes()
-        enqueueWork(recurringMinutes)
-
-        // Schedule job
-        Toast.makeText(
-            this,
-            "Reminder notifications will occur every $recurringMinutes minutes",
-            Toast.LENGTH_SHORT
-        ).show()
-        Log.d(TAG, getString(R.string.reminders_enabled))
-    }
-
-    private fun setRecurringMinutes(): Int {
-        var recurringMinutes = binding.durationTime.text.toString().toInt()
-        if (recurringMinutes < this.resources.getInteger(R.integer.defaultRecurringMinutes)) {
-            recurringMinutes = this.resources.getInteger(R.integer.defaultRecurringMinutes)
-            Toast.makeText(this, getString(R.string.min_reminder_exceeded), Toast.LENGTH_SHORT)
-                .show()
-        }
-        binding.durationTime.text =
-            Editable.Factory.getInstance().newEditable(recurringMinutes.toString())
-        setRecurringMinutesPreference(recurringMinutes)
-        return recurringMinutes
-    }
-
-    private fun enqueueWork(recurringMinutes: Int) {
-        val constraints = Constraints.Builder().build()
-        val work = PeriodicWorkRequestBuilder1<ReminderWorker>(
-            repeatInterval = Duration.ofMinutes(recurringMinutes.toLong())
-        )
-            .setInitialDelay(0, TimeUnit.MINUTES)
-            .setBackoffCriteria(
-                BackoffPolicy.LINEAR,
-                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                TimeUnit.MILLISECONDS
-            )
-            .setConstraints(constraints)
-            .addTag(this.packageName)
-            .build()
-        workManager.enqueue(work)
-    }
-
-    /**
-     * Executed when user clicks on CANCEL ALL.
-     */
-    private fun cancelPeriodicWork(showToast: Boolean) {
-        workManager.cancelAllWorkByTag(this.packageName)
-        Log.d(TAG, getString(R.string.reminders_disabled))
-        if (showToast) showToast(getString(R.string.reminders_disabled))
     }
 
     companion object {
-        private const val TAG = "MainActivity"
+        internal const val TAG = "MainActivity"
     }
 }

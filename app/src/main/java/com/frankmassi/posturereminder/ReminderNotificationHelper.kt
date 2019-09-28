@@ -40,7 +40,7 @@ internal class ReminderNotificationHelper
     init {
         val chan1 = NotificationChannel(
             PRIMARY_CHANNEL,
-            getString(R.string.noti_channel_default), NotificationManager.IMPORTANCE_DEFAULT
+            getString(R.string.notification_channel_default), NotificationManager.IMPORTANCE_DEFAULT
         )
         chan1.lightColor = Color.GREEN
         chan1.lockscreenVisibility = Notification.VISIBILITY_PRIVATE

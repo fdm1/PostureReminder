@@ -16,20 +16,18 @@ limitations under the License.
 
 <resources>
     <string name="app_name">Slouchr</string>
-    <string name="onstoptask">onStopTask</string>
-    <string name="onstarttask">onStartTask</string>
     <string name="enable_reminders_button_text">Enable Reminders</string>
     <string name="disable_reminders_button_text">Disable Reminders</string>
-    <string name="work_duration">Remind me every minutes:</string>
+    <string name="work_duration">Remind me every</string>
+    <string name="work_duration_units">minutes</string>
     <string name="reminders_disabled">Disabling reminders</string>
     <string name="default_duration_time">15</string>
 
 
-    <string name="noti_channel_default">Primary Channel</string>
+    <string name="notification_channel_default">Primary Channel</string>
     <string name="min_reminder_exceeded">Reminders cannot be more often than every 15 minutes</string>
     <string name="reminders_enabled">Enabling reminders</string>
     <string name="notification_title">Straighten Up</string>
     <string name="notification_body">straighten up yo</string>
     <string name="RecurringMinutesVariable">DEFAULT_RECURRING_MINUTES</string>
-
 </resources>

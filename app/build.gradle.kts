@@ -13,13 +13,13 @@ android {
         applicationId = "com.frankmassi.posturereminder"
         minSdkVersion(28)
         targetSdkVersion(28)
-        versionCode = 5
-        versionName ="0.0.1"
+        versionCode = 6
+        versionName = "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled=false
+            isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -47,14 +47,14 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
     androidTestImplementation("androidx.work:work-testing:${project.extra["workVersion"]}")
 }
-tasks.withType<KotlinCompile> {
+tasks.withType < KotlinCompile > {
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 tasks.register("tagGithub", Exec::class) {
-    workingDir( "../bin")
+    workingDir("../bin")
     executable("python3")
-    args ("tag_release.py", android.defaultConfig.versionName + "-" + android.defaultConfig.versionCode)
+    args("tag_release.py", android.defaultConfig.versionName + "-" + android.defaultConfig.versionCode)
 }

@@ -15,14 +15,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<resources>
-    <dimen name="default_text_size">14sp</dimen>
-    <dimen name="large_text_size">20sp</dimen>
-    <dimen name="button_horizontal_margins">40dp</dimen>
-    <dimen name="button_top_margin">20dp</dimen>
-    <dimen name="edittext_width">48dp</dimen>
-    <dimen name="textview_margin">12dp</dimen>
-    <dimen name="textview_bottom_margin">10dp</dimen>
-    <dimen name="layout_height">100dp</dimen>
-    <dimen name="table_margin">8dp</dimen>
-</resources>
+<resources></resources>
