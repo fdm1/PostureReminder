@@ -1,9 +1,12 @@
-name: Android CI
+name: Generate Release
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-  build:
+  generate-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,22 +15,10 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-
-    - name: Build with Gradle
-      run: ./gradlew build
-
     - name: set up Python 3.7
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-      on:
-        push:
-          branches:
-            - master
 
     - name: Tag with Gradle
       run: ./gradlew tagGithub
-      on:
-        push:
-          branches:
-            - master
