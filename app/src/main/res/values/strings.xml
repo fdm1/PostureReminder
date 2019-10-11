@@ -30,4 +30,5 @@ limitations under the License.
     <string name="notification_title">Straighten Up</string>
     <string name="notification_body">straighten up yo</string>
     <string name="RecurringMinutesVariable">DEFAULT_RECURRING_MINUTES</string>
+    <string name="title_activity_new_event">NewEventActivity</string>
 </resources>

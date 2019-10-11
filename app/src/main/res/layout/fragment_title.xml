@@ -6,6 +6,12 @@
             android:id="@+id/titleConstraint"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/darker_gray"
+                    tools:listitem="@layout/recyclerview_item" />
                 <TextView
                     android:id="@+id/titleFragmentTitle"
                     android:layout_width="match_parent"
