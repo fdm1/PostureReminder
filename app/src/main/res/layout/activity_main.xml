@@ -47,7 +47,7 @@ limitations under the License.
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_stat_name"
-        app:backgroundTint="#4CAF50" />
+        app:backgroundTint="@color/goodPosture" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bad_posture_fab"
@@ -55,7 +55,9 @@ limitations under the License.
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_stat_name" />
+        android:src="@drawable/ic_stat_name"
+        app:backgroundTint="@color/badPosture"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

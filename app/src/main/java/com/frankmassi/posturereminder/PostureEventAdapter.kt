@@ -27,6 +27,12 @@ class PostureEventAdapter internal constructor(
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
         val current = events[position]
         holder.wordItemView.text = "${current.displayCreatedAt()}: ${current.wasGood}"
+        val color = if (current.wasGood) {
+            inflater.context.getColor(R.color.goodPosture)
+        } else {
+            inflater.context.getColor(R.color.badPosture)
+        }
+        holder.wordItemView.setBackgroundColor(color)
     }
 
     internal fun setEvents(events: List<PostureEvent>) {
