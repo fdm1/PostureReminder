@@ -14,11 +14,13 @@ class PostureEventViewModel(application: Application) : AndroidViewModel(applica
     private val repository: PostureEventRepository
 
     val allEvents: LiveData<List<PostureEvent>>
+    val recentEvents: LiveData<List<PostureEvent>>
 
     init {
         val eventDao = PostureReminderDatabase.getDatabase(application).postureEventDao()
         repository = PostureEventRepository(eventDao)
-        allEvents = repository.recentEvents
+        allEvents = repository.allEvents
+        recentEvents = repository.recentEvents
     }
 
     fun insert(postureEvent: PostureEvent) = viewModelScope.launch {

@@ -21,6 +21,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.frankmassi.posturereminder.database.PostureEvent
@@ -47,9 +48,9 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        postureEventViewModel = PostureEventViewModel(this.application)
+        postureEventViewModel = ViewModelProviders.of(this).get(PostureEventViewModel::class.java)
 
-        postureEventViewModel.allEvents.observe(this, Observer { events ->
+        postureEventViewModel.recentEvents.observe(this, Observer { events ->
             events?.let {adapter.setEvents(it)} })
 
         val goodPostureFab = binding.goodPostureFab
