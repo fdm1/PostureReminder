@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val toolbar = binding.toolbar
-//        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar)
 
 
         val recyclerView = binding.included.recyclerview
